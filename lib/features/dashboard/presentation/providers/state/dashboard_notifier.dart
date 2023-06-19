@@ -29,7 +29,8 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
       );
 
       final response = await dashboardRepository.fetchProducts(
-          skip: state.page * PRODUCTS_PER_PAGE);
+        state.page * PRODUCTS_PER_PAGE,
+      );
 
       updateStateFromResponse(response);
     } else {
@@ -67,7 +68,8 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   }
 
   void updateStateFromResponse(
-      Either<AppException, PaginatedResponse<dynamic>> response) {
+    Either<AppException, PaginatedResponse> response,
+  ) {
     response.fold((failure) {
       state = state.copyWith(
         state: DashboardConcreteState.failure,
@@ -75,7 +77,13 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
         isLoading: false,
       );
     }, (data) {
-      final productList = data.data.map((e) => Product.fromJson(e)).toList();
+      final productList = data.data
+          .map(
+            (e) => Product.fromJson(
+              e as Map<String, dynamic>,
+            ),
+          )
+          .toList();
 
       final totalProducts = [...state.productList, ...productList];
 

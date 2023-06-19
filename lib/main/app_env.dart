@@ -1,9 +1,9 @@
-// ignore_for_file: constant_identifier_names, use_setters_to_change_properties, avoid_classes_with_only_static_members
 enum AppEnvironment { DEV, STAGING, PROD }
 
 abstract class EnvInfo {
   static AppEnvironment _environment = AppEnvironment.DEV;
 
+  // ignore: use_setters_to_change_properties
   static void initialize(AppEnvironment environment) {
     EnvInfo._environment = environment;
   }

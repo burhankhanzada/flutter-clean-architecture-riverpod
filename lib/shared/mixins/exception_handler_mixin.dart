@@ -11,8 +11,9 @@ import 'package:flutter_project/shared/exceptions/http_exception.dart';
 mixin ExceptionHandlerMixin on NetworkService {
   Future<Either<AppException, response.Response>>
       handleException<T extends Object>(
-          Future<Response<dynamic>> Function() handler,
-          {String endpoint = ''}) async {
+    Future<Response<dynamic>> Function() handler, {
+    String endpoint = '',
+  }) async {
     try {
       final res = await handler();
       return Right(
@@ -22,10 +23,11 @@ mixin ExceptionHandlerMixin on NetworkService {
           statusMessage: res.statusMessage,
         ),
       );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      String message = '';
-      String identifier = '';
-      int statusCode = 0;
+      var message = '';
+      var identifier = '';
+      var statusCode = 0;
       log(e.runtimeType.toString());
       switch (e.runtimeType) {
         case SocketException:
@@ -35,8 +37,8 @@ mixin ExceptionHandlerMixin on NetworkService {
           identifier = 'Socket Exception ${e.message}\n at  $endpoint';
           break;
 
-        case DioError:
-          e as DioError;
+        case DioException:
+          e as DioException;
           message = e.response?.data?['message'] ?? 'Internal Error occured';
           statusCode = 1;
           identifier = 'DioError ${e.message} \nat  $endpoint';
@@ -45,7 +47,7 @@ mixin ExceptionHandlerMixin on NetworkService {
         default:
           message = 'Unknown error occured';
           statusCode = 2;
-          identifier = 'Unknown error ${e.toString()}\n at $endpoint';
+          identifier = 'Unknown error $e\n at $endpoint';
       }
       return Left(
         AppException(

@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DashboardScreen extends ConsumerStatefulWidget {
   static const String routeName = 'DashboardScreen';
 
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
@@ -33,37 +33,41 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     super.dispose();
   }
 
-  void scrollControllerListener() {
+  Future<void> scrollControllerListener() async {
     if (scrollController.position.maxScrollExtent == scrollController.offset) {
       final notifier = ref.read(dashboardNotifierProvider.notifier);
       if (isSearchActive) {
-        notifier.searchProducts(searchController.text);
+        await notifier.searchProducts(searchController.text);
       } else {
-        notifier.fetchProducts();
+        await notifier.fetchProducts();
       }
     }
   }
 
   void refreshScrollControllerListener() {
-    scrollController.removeListener(scrollControllerListener);
-    scrollController.addListener(scrollControllerListener);
+    scrollController
+      ..removeListener(scrollControllerListener)
+      ..addListener(scrollControllerListener);
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(dashboardNotifierProvider);
 
-    ref.listen(
+    ref.listen<DashboardState>(
       dashboardNotifierProvider.select((value) => value),
-      ((DashboardState? previous, DashboardState next) {
+      (previous, next) {
         //show Snackbar on failure
         if (next.state == DashboardConcreteState.fetchedAllProducts) {
           if (next.message.isNotEmpty) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(next.message.toString())));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(next.message),
+              ),
+            );
           }
         }
-      }),
+      },
     );
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +96,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             : const Text('Dashboard'),
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               searchController.clear();
               setState(() {
                 isSearchActive = !isSearchActive;
@@ -100,7 +104,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
               ref.read(dashboardNotifierProvider.notifier).resetState();
               if (!isSearchActive) {
-                ref.read(dashboardNotifierProvider.notifier).fetchProducts();
+                await ref
+                    .read(dashboardNotifierProvider.notifier)
+                    .fetchProducts();
               }
               refreshScrollControllerListener();
             },
@@ -127,8 +133,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             final product = state.productList[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(product.thumbnail)),
+                                backgroundImage:
+                                    NetworkImage(product.thumbnail),
+                              ),
                               title: Text(
                                 product.title,
                                 style: Theme.of(context).textTheme.bodyLarge,
@@ -150,19 +157,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     if (state.state == DashboardConcreteState.fetchingMore)
                       const Padding(
-                        padding: EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.only(bottom: 16),
                         child: CircularProgressIndicator(),
                       ),
                   ],
                 )
               : Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 22),
                     child: Text(
                       state.message,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 18.0,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -171,10 +178,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  _onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref.read(dashboardNotifierProvider.notifier).searchProducts(query);
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+    }
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      await ref.read(dashboardNotifierProvider.notifier).searchProducts(query);
     });
   }
 }

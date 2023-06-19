@@ -42,16 +42,16 @@ class UserLocalDatasource extends UserDataSource {
 
   @override
   Future<bool> saveUser({required User user}) async {
-    return await stroageService.set(storageKey, jsonEncode(user.toJson()));
+    return stroageService.set(storageKey, jsonEncode(user.toJson()));
   }
 
   @override
   Future<bool> deleteUser() async {
-    return await stroageService.remove(storageKey);
+    return stroageService.remove(storageKey);
   }
 
   @override
   Future<bool> hasUser() async {
-    return await stroageService.has(storageKey);
+    return stroageService.has(storageKey);
   }
 }

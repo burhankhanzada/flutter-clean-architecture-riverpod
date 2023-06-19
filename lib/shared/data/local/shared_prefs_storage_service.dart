@@ -10,8 +10,10 @@ class SharedPrefsService implements StroageService {
       Completer<SharedPreferences>();
 
   @override
-  void init() {
-    initCompleter.complete(SharedPreferences.getInstance());
+  Future<void> init() async {
+    initCompleter.complete(
+      SharedPreferences.getInstance(),
+    );
   }
 
   @override
@@ -38,12 +40,12 @@ class SharedPrefsService implements StroageService {
   @override
   Future<bool> remove(String key) async {
     sharedPreferences = await initCompleter.future;
-    return await sharedPreferences!.remove(key);
+    return sharedPreferences!.remove(key);
   }
 
   @override
-  Future<bool> set(String key, data) async {
+  Future<bool> set(String key, String data) async {
     sharedPreferences = await initCompleter.future;
-    return await sharedPreferences!.setString(key, data.toString());
+    return sharedPreferences!.setString(key, data);
   }
 }

@@ -6,8 +6,11 @@ class Response {
   final String? statusMessage;
   final dynamic data;
 
-  Response(
-      {required this.statusCode, this.statusMessage, this.data = const {}});
+  Response({
+    this.statusMessage,
+    this.data = const {},
+    required this.statusCode,
+  });
   @override
   String toString() {
     return 'statusCode=$statusCode\nstatusMessage=$statusMessage\n data=$data';

@@ -21,5 +21,5 @@ class Product with _$Product {
     @Default([]) List<String> images,
   }) = _Product;
 
-  factory Product.fromJson(dynamic json) => _$ProductFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 }

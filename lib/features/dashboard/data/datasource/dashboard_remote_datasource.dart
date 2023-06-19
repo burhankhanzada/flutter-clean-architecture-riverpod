@@ -1,14 +1,19 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_project/shared/data/remote/remote.dart';
 import 'package:flutter_project/shared/domain/models/paginated_response.dart';
+import 'package:flutter_project/shared/domain/models/product/product_model.dart';
 import 'package:flutter_project/shared/exceptions/http_exception.dart';
 import 'package:flutter_project/shared/globals.dart';
 
 abstract class DashboardDatasource {
   Future<Either<AppException, PaginatedResponse>> fetchPaginatedProducts(
-      {required int skip});
-  Future<Either<AppException, PaginatedResponse>> searchPaginatedProducts(
-      {required int skip, required String query});
+    int skip,
+  );
+
+  Future<Either<AppException, PaginatedResponse>> searchPaginatedProducts({
+    required int skip,
+    required String query,
+  });
 }
 
 class DashboardRemoteDatasource extends DashboardDatasource {
@@ -17,7 +22,8 @@ class DashboardRemoteDatasource extends DashboardDatasource {
 
   @override
   Future<Either<AppException, PaginatedResponse>> fetchPaginatedProducts(
-      {required int skip}) async {
+    int skip,
+  ) async {
     final response = await networkService.get(
       '/products',
       queryParameters: {
@@ -27,10 +33,10 @@ class DashboardRemoteDatasource extends DashboardDatasource {
     );
 
     return response.fold(
-      (l) => Left(l),
+      Left.new,
       (r) {
-        final jsonData = r.data;
-        if (jsonData == null) {
+        final Map<String, dynamic> jsonData = r.data;
+        if (jsonData.isEmpty) {
           return Left(
             AppException(
               identifier: 'fetchPaginatedData',
@@ -39,16 +45,20 @@ class DashboardRemoteDatasource extends DashboardDatasource {
             ),
           );
         }
-        final paginatedResponse =
-            PaginatedResponse.fromJson(jsonData, jsonData['products'] ?? []);
+        final paginatedResponse = PaginatedResponse.fromJson(
+          jsonData,
+          jsonData['products'] ?? [],
+        );
         return Right(paginatedResponse);
       },
     );
   }
 
   @override
-  Future<Either<AppException, PaginatedResponse>> searchPaginatedProducts(
-      {required int skip, required String query}) async {
+  Future<Either<AppException, PaginatedResponse>> searchPaginatedProducts({
+    required int skip,
+    required String query,
+  }) async {
     final response = await networkService.get(
       '/products/search?q=$query',
       queryParameters: {
@@ -58,10 +68,10 @@ class DashboardRemoteDatasource extends DashboardDatasource {
     );
 
     return response.fold(
-      (l) => Left(l),
+      Left.new,
       (r) {
-        final jsonData = r.data;
-        if (jsonData == null) {
+        final Map<String, dynamic> jsonData = r.data;
+        if (jsonData.isEmpty) {
           return Left(
             AppException(
               identifier: 'search PaginatedData',
@@ -70,8 +80,10 @@ class DashboardRemoteDatasource extends DashboardDatasource {
             ),
           );
         }
-        final paginatedResponse =
-            PaginatedResponse.fromJson(jsonData, jsonData['products'] ?? []);
+        final paginatedResponse = PaginatedResponse<Product>.fromJson(
+          jsonData,
+          jsonData['products'] ?? [],
+        );
         return Right(paginatedResponse);
       },
     );

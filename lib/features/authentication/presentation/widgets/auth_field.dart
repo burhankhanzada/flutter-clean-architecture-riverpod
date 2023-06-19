@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 
 class AuthField extends StatelessWidget {
   const AuthField({
-    Key? key,
+    super.key,
     required this.hintText,
-    this.obscureText = false,
     required this.controller,
-  }) : super(key: key);
+    this.obscureText = false,
+  });
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 8,
+      ),
       child: TextField(
         key: key,
         controller: controller,
@@ -22,7 +25,7 @@ class AuthField extends StatelessWidget {
           hintText: hintText,
           border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(8.0),
+              Radius.circular(8),
             ),
           ),
         ),

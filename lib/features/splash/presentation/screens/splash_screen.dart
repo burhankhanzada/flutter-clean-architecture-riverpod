@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   static const String routeName = '/splashScreen';
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
@@ -23,7 +23,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           ? const DashboardScreen()
           : LoginScreen() as PageRouteInfo;
       // ignore: use_build_context_synchronously
-      AutoRouter.of(context).pushAndPopUntil(
+      await AutoRouter.of(context).pushAndPopUntil(
         route,
         predicate: (_) => false,
       );
@@ -40,7 +40,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
-            fontSize: 18.0,
+            fontSize: 18,
           ),
         ),
       ),

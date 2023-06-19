@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final currentUserProvider = FutureProvider<User?>((ref) async {
   final repository = ref.watch(userLocalRepositoryProvider);
-  final eitherType = (await repository.fetchUser());
+  final eitherType = await repository.fetchUser();
 
   return eitherType.fold((l) => null, (r) => r);
 });

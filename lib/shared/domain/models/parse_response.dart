@@ -14,8 +14,10 @@ class ParseResponse<T> {
   final String? message;
   final T? data;
 
-  factory ParseResponse.fromMap(dynamic json,
-      {required T Function(dynamic) modifier}) {
+  factory ParseResponse.fromMap(
+    Map<String, dynamic> json, {
+    required T Function(Map<String, dynamic> json) modifier,
+  }) {
     return ParseResponse<T>(
       success: json['status'] == 'success',
       status: json['status'],

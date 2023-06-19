@@ -9,11 +9,16 @@ class PaginatedResponse<T> {
 
   final List<T> data;
 
-  PaginatedResponse(
-      {required this.total, required this.skip, required this.data});
+  PaginatedResponse({
+    required this.total,
+    required this.skip,
+    required this.data,
+  });
 
-  factory PaginatedResponse.fromJson(dynamic json, List<T> data,
-          {Function(dynamic json)? fixture}) =>
+  factory PaginatedResponse.fromJson(
+    Map<String, dynamic> json,
+    List<T> data,
+  ) =>
       PaginatedResponse(
         total: json['total'] ?? 0,
         skip: json['skip'] ?? 0,

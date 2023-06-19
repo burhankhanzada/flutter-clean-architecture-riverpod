@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_project/shared/data/local/storage_service.dart';
 import 'package:flutter_project/shared/domain/providers/sharedpreferences_storage_service_provider.dart';
@@ -20,15 +22,17 @@ class AppThemeModeNotifier extends StateNotifier<ThemeMode> {
   ThemeMode currentTheme = ThemeMode.light;
 
   AppThemeModeNotifier(this.stroageService) : super(ThemeMode.light) {
-    getCurrentTheme();
+    unawaited(
+      getCurrentTheme(),
+    );
   }
 
-  void toggleTheme() {
+  Future<void> toggleTheme() async {
     state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    stroageService.set(APP_THEME_STORAGE_KEY, state.name);
+    await stroageService.set(APP_THEME_STORAGE_KEY, state.name);
   }
 
-  void getCurrentTheme() async {
+  Future<void> getCurrentTheme() async {
     final theme = await stroageService.get(APP_THEME_STORAGE_KEY);
     final value = ThemeMode.values.byName('${theme ?? 'light'}');
     state = value;

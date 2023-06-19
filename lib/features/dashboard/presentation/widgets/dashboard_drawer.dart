@@ -7,9 +7,7 @@ import 'package:flutter_project/shared/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashboardDrawer extends ConsumerWidget {
-  const DashboardDrawer({
-    Key? key,
-  }) : super(key: key);
+  const DashboardDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +39,7 @@ class DashboardDrawer extends ConsumerWidget {
                   onTap: () async {
                     await ref.read(userLocalRepositoryProvider).deleteUser();
                     // ignore: use_build_context_synchronously
-                    AutoRouter.of(context).pushAndPopUntil(
+                    await AutoRouter.of(context).pushAndPopUntil(
                       LoginScreen(),
                       predicate: (_) => false,
                     );
@@ -54,8 +52,8 @@ class DashboardDrawer extends ConsumerWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {
-                    ref.read(appThemeProvider.notifier).toggleTheme();
+                  onTap: () async {
+                    await ref.read(appThemeProvider.notifier).toggleTheme();
                   },
                   child: CircleAvatar(
                     child: Icon(

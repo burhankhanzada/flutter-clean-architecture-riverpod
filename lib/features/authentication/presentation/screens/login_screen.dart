@@ -9,27 +9,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class LoginScreen extends ConsumerWidget {
   static const routeName = '/loginScreen';
 
-  LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({super.key});
 
-  final TextEditingController usernameController =
-      TextEditingController(text: 'kminchelle');
-  final TextEditingController passwordController =
-      TextEditingController(text: '0lelplR');
+  final usernameController = TextEditingController(text: 'kminchelle');
+
+  final passwordController = TextEditingController(text: '0lelplR');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(authStateNotifierProvider);
     ref.listen(
       authStateNotifierProvider.select((value) => value),
-      ((previous, next) {
+      (previous, next) async {
         //show Snackbar on failure
         if (next is Failure) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(next.exception.message.toString())));
+            SnackBar(
+              content: Text(
+                next.exception.message!,
+              ),
+            ),
+          );
         } else if (next is Success) {
-          AutoRouter.of(context).pushAndPopUntil(const DashboardScreen(),
-              predicate: (_) => false);
+          await AutoRouter.of(context).pushAndPopUntil(
+            const DashboardScreen(),
+            predicate: (_) => false,
+          );
         }
-      }),
+      },
     );
     return Scaffold(
       appBar: AppBar(
@@ -59,9 +66,9 @@ class LoginScreen extends ConsumerWidget {
 
   Widget loginButton(WidgetRef ref) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         // validate email and password
-        ref.read(authStateNotifierProvider.notifier).loginUser(
+        await ref.read(authStateNotifierProvider.notifier).loginUser(
               usernameController.text,
               passwordController.text,
             );
