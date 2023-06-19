@@ -47,7 +47,6 @@ class AppTheme {
         error: AppColors.error,
         background: AppColors.black,
       ),
-      backgroundColor: AppColors.black,
       scaffoldBackgroundColor: AppColors.black,
       textTheme: TextThemes.darkTextTheme,
       primaryTextTheme: TextThemes.primaryTextTheme,
